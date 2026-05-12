@@ -102,7 +102,7 @@ If you use DayLight, please consider supporting these organizations directly —
 
 ## License
 
-DayLight is licensed under the **GNU Affero General Public License v3.0** ([LICENSE](./LICENSE)).
+DayLight is licensed under **AGPL-3.0** ([LICENSE](./LICENSE)).
 
 In practical terms: you can use, modify, and redistribute DayLight freely, including for commercial purposes. But if you run a modified version of DayLight as a network service (a hosted site, a SaaS, anything users interact with over a network), you must publish your modifications under the same license. This is what keeps DayLight a public good rather than something a private company can quietly fork, close, and sell back to voters.
 
