@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, ExternalLink, ShieldCheck, AlertTriangle } from "lucide-react";
-import { getCandidate, type VoteRecord } from "@/lib/api";
+import { getCandidate, type SponsoredBill, type VoteRecord } from "@/lib/api";
 import { DonorBarChart, IndustryDonut } from "@/components/DonorChart";
 import { SynthesisCard } from "@/components/SynthesisCard";
 import { RevolvingDoorBadge } from "@/components/RevolvingDoorBadge";
@@ -17,11 +17,15 @@ import {
 } from "@/lib/utils";
 
 interface PageProps {
-  params: { id: string };
+  params: { id: string[] | string };
 }
 
 export default async function CandidatePage({ params }: PageProps) {
-  const c = await getCandidate(params.id);
+  // Candidate IDs contain slashes (e.g. "fl-23/u.s.-house-fl-23/jared-moskowitz")
+  // so the route is a catch-all and params.id arrives as an array of segments.
+  const idArr = Array.isArray(params.id) ? params.id : [params.id];
+  const candidateId = idArr.map((s) => decodeURIComponent(s)).join("/");
+  const c = await getCandidate(candidateId);
   if (!c) notFound();
   const p = partyKey(c.party);
 
@@ -145,6 +149,22 @@ export default async function CandidatePage({ params }: PageProps) {
         <VotesTable votes={c.votes} />
       </section>
 
+      {/* Sponsored bills */}
+      <section
+        aria-labelledby="sponsored-heading"
+        className="mt-10 rounded-2xl border border-ink-200 bg-white shadow-card overflow-hidden"
+      >
+        <header className="px-5 pt-5 pb-3 border-b border-ink-100">
+          <h2 id="sponsored-heading" className="text-base font-semibold text-ink-900">
+            Sponsored legislation
+          </h2>
+          <p className="text-[11px] text-ink-500 mt-0.5">
+            Bills authored by this member (not cosponsored). Source: Congress.gov.
+          </p>
+        </header>
+        <SponsoredBillsList bills={c.sponsoredBills ?? []} />
+      </section>
+
       {/* Sources */}
       <section
         aria-labelledby="sources-heading"
@@ -178,6 +198,49 @@ export default async function CandidatePage({ params }: PageProps) {
         )}
       </section>
     </div>
+  );
+}
+
+function SponsoredBillsList({ bills }: { bills: SponsoredBill[] }) {
+  if (!bills || bills.length === 0) {
+    return (
+      <p className="px-5 py-6 text-sm text-ink-500">
+        No sponsored bills found for this member in the current data window.
+      </p>
+    );
+  }
+  return (
+    <ul className="divide-y divide-ink-100">
+      {bills.map((b) => (
+        <li key={b.billId} className="px-5 py-3 flex items-start gap-3">
+          <span className="mt-0.5 inline-flex items-center rounded bg-ink-100 px-1.5 py-0.5 text-[10px] font-mono uppercase text-ink-700">
+            {b.billId}
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-ink-900">{b.title}</p>
+            {(b.introducedDate || b.policyArea) && (
+              <p className="text-[11px] text-ink-500 mt-0.5">
+                {b.introducedDate && <>Introduced {formatDate(b.introducedDate)}</>}
+                {b.introducedDate && b.policyArea && " · "}
+                {b.policyArea}
+              </p>
+            )}
+          </div>
+          {b.sourceUrl && (
+            <a
+              href={b.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="ml-auto text-[11px] text-ink-500 hover:text-ink-900 inline-flex items-center gap-0.5 whitespace-nowrap"
+              aria-label={`Open ${b.billId} on Congress.gov`}
+            >
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+              source
+            </a>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }
 

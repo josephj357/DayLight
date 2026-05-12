@@ -6,10 +6,19 @@ This module replaces the discontinued ProPublica Congress API (shut down
 2024-07-10). Per /docs/research/data-licensing.md, the substitution is
 clean: Congress.gov is the canonical upstream that ProPublica was wrapping.
 
-What we pull per federal candidate:
-- Member metadata (bioguide ID, congress number).
-- Sponsored and cosponsored bills (limited to current congress for v1).
-- Roll-call votes by the member (current congress).
+What we pull per federal candidate (v1):
+- Member metadata (bioguide ID, terms).
+- Sponsored legislation (bills the member authored).
+
+What we deliberately do NOT pull in v1:
+- Roll-call votes. Congress.gov's `house-roll-call-vote` endpoint returns
+  an error in practice (verified 2026-05-12). Vote ingestion is parked
+  until a working upstream is identified (clerk.house.gov bulk XML is the
+  most likely candidate).
+- Cosponsored bills. Modeling cosponsorship correctly requires a
+  separate `bill_cosponsors` table that doesn't exist in v1 — sponsored
+  bills alone are the more direct "what the politician chose to push"
+  signal anyway.
 """
 from __future__ import annotations
 
@@ -40,24 +49,39 @@ def _fetch_member(bioguide_id: str) -> dict[str, Any] | None:
     )
 
 
-def _fetch_member_votes(bioguide_id: str, congress: int) -> dict[str, Any] | None:
-    """Member-vote endpoints on Congress.gov are still maturing.
-
-    For v1 we pull recent House roll-call votes for the given congress and let
-    the caller filter to votes cast by this member. This is acceptable for v1
-    volumes (~700 votes/congress); for higher volumes this should be paginated
-    or moved to a bulk-import path.
-    """
+def _fetch_sponsored_legislation(bioguide_id: str, limit: int = 50) -> dict[str, Any] | None:
     key = _api_key()
     if not key:
         return None
     return cached_get(
-        f"{CONGRESS_BASE}/house-vote/{congress}",
-        params={"api_key": key, "format": "json", "limit": 250},
+        f"{CONGRESS_BASE}/member/{bioguide_id}/sponsored-legislation",
+        params={"api_key": key, "format": "json", "limit": limit},
     )
 
 
-def _ensure_bill(conn: sqlite3.Connection, bill: dict[str, Any]) -> str | None:
+def _ensure_politician(
+    conn: sqlite3.Connection,
+    bioguide_id: str,
+    name: str,
+    current_office: str | None = None,
+) -> str:
+    """Idempotent upsert of a politician row, return its id."""
+    politician_id = f"politician:bioguide:{bioguide_id}"
+    conn.execute(
+        """
+        INSERT OR IGNORE INTO politicians (id, name, bioguide_id, current_office)
+        VALUES (?, ?, ?, ?)
+        """,
+        (politician_id, name, bioguide_id, current_office),
+    )
+    return politician_id
+
+
+def _ensure_bill(
+    conn: sqlite3.Connection,
+    bill: dict[str, Any],
+    sponsor_politician_id: str | None = None,
+) -> str | None:
     """Upsert a bill row. Returns the bill_id or None if input is malformed."""
     bill_type = (bill.get("type") or "").lower()
     number = bill.get("number")
@@ -65,11 +89,18 @@ def _ensure_bill(conn: sqlite3.Connection, bill: dict[str, Any]) -> str | None:
     if not bill_type or number is None or congress is None:
         return None
     bill_id = f"{bill_type}-{number}-{congress}"
+
+    latest_action_text = None
+    la = bill.get("latestAction")
+    if isinstance(la, dict):
+        latest_action_text = la.get("text")
+
     conn.execute(
         """
-        INSERT OR IGNORE INTO bills
-            (id, congress, bill_type, number, title, summary, introduced_date, status, congress_gov_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT OR REPLACE INTO bills
+            (id, congress, bill_type, number, title, summary, sponsor_id,
+             introduced_date, status, congress_gov_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             bill_id,
@@ -77,9 +108,10 @@ def _ensure_bill(conn: sqlite3.Connection, bill: dict[str, Any]) -> str | None:
             bill_type,
             int(number),
             bill.get("title"),
-            bill.get("summary"),
+            bill.get("policyArea", {}).get("name") if isinstance(bill.get("policyArea"), dict) else None,
+            sponsor_politician_id,
             bill.get("introducedDate"),
-            bill.get("latestAction", {}).get("text") if isinstance(bill.get("latestAction"), dict) else None,
+            latest_action_text,
             bill.get("url"),
         ),
     )
@@ -96,28 +128,41 @@ def run(conn: sqlite3.Connection, district: DistrictConfig) -> int:
 
         member = _fetch_member(bioguide)
         if not member:
+            logger.warning("Member fetch failed for bioguide=%s", bioguide)
             continue
 
-        # Member metadata might enrich politicians/candidates rows; for v1 we
-        # just ensure the bioguide id is on the candidate row.
-        # The actual candidate row was created by fetch_fec.py.
+        politician_id = _ensure_politician(
+            conn,
+            bioguide_id=bioguide,
+            name=incumbent.get("name", bioguide),
+            current_office=race.get("office"),
+        )
 
-        # Pull recent House votes; this is a stub that future contributors
-        # extend with member-specific filtering.
-        votes = _fetch_member_votes(bioguide, congress=118)
-        if not votes:
+        # Attach the politician_id to the candidate row (set if currently NULL).
+        # Candidate row is created by fetch_fec.run, which must have already
+        # executed per INGESTION_STEPS ordering.
+        conn.execute(
+            """
+            UPDATE candidates
+            SET politician_id = COALESCE(politician_id, ?), bioguide_id = ?
+            WHERE bioguide_id = ? OR fec_candidate_id = ?
+            """,
+            (
+                politician_id,
+                bioguide,
+                bioguide,
+                incumbent.get("fec_candidate_id") or "",
+            ),
+        )
+
+        sponsored = _fetch_sponsored_legislation(bioguide, limit=50)
+        if not sponsored:
+            logger.warning("No sponsored-legislation payload for bioguide=%s", bioguide)
             continue
 
-        for vote in (votes.get("houseVotes") or []):
-            bill_ref = vote.get("bill") or {}
-            bill_id = _ensure_bill(conn, bill_ref)
-            if not bill_id:
-                continue
-            # We do not yet have per-member position from this endpoint in v1.
-            # The full member-vote linkage requires the more detailed
-            # /house-vote/{congress}/{session}/{rollnumber} endpoint, which is
-            # left as a TODO for a future ingestion expansion.
-            rows_written += 1
+        for bill in (sponsored.get("sponsoredLegislation") or []):
+            if _ensure_bill(conn, bill, sponsor_politician_id=politician_id):
+                rows_written += 1
 
     conn.commit()
     log_ingestion(conn, "congress_gov", "ok", rows_written=rows_written, note=f"district={district.id}")

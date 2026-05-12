@@ -14,6 +14,7 @@ from schema.models import (  # noqa: E402
     IndustryBreakdown,
     RevolvingDoor,
     SourceLink,
+    SponsoredBill,
     Synthesis,
     VoteRecord,
 )
@@ -24,6 +25,9 @@ router = APIRouter()
 
 
 def _top_donors(candidate_id: str) -> list[Donor]:
+    # NOTE: GROUP BY must reference the raw expressions, not the SELECT aliases
+    # — SQLite resolves alias references in GROUP BY inconsistently and was
+    # collapsing 20 distinct employers into one row.
     rows = fetchall(
         """
         SELECT
@@ -35,8 +39,11 @@ def _top_donors(candidate_id: str) -> list[Donor]:
         FROM contributions c
         LEFT JOIN donors d ON d.id = c.donor_id
         WHERE c.candidate_id = ?
-        GROUP BY name, type, industry, cycle
-        ORDER BY amount DESC
+        GROUP BY COALESCE(d.name, c.raw_employer),
+                 COALESCE(d.type, 'other'),
+                 c.industry,
+                 c.cycle
+        ORDER BY SUM(c.amount) DESC
         LIMIT 5
         """,
         (candidate_id,),
@@ -100,6 +107,31 @@ def _votes(candidate_id: str) -> list[VoteRecord]:
     ]
 
 
+def _sponsored_bills(candidate_id: str) -> list[SponsoredBill]:
+    rows = fetchall(
+        """
+        SELECT b.id, b.title, b.introduced_date, b.status, b.congress_gov_url, b.summary
+        FROM bills b
+        JOIN candidates c ON c.politician_id = b.sponsor_id
+        WHERE c.id = ?
+        ORDER BY b.introduced_date DESC
+        LIMIT 20
+        """,
+        (candidate_id,),
+    )
+    return [
+        SponsoredBill(
+            billId=r["id"],
+            title=r["title"] or r["id"],
+            introducedDate=r["introduced_date"],
+            status=r["status"],
+            sourceUrl=r["congress_gov_url"],
+            policyArea=r["summary"],
+        )
+        for r in rows
+    ]
+
+
 def _revolving_door(candidate_id: str) -> list[RevolvingDoor]:
     rows = fetchall(
         """
@@ -144,7 +176,7 @@ def _sources(candidate_id: str) -> list[SourceLink]:
     return [SourceLink(label=r["label"], url=r["url"]) for r in rows]
 
 
-@router.get("/candidates/{candidate_id}", response_model=CandidateDetail)
+@router.get("/candidates/{candidate_id:path}", response_model=CandidateDetail)
 def get_candidate(candidate_id: str) -> CandidateDetail:
     row = fetchone(
         """
@@ -174,6 +206,7 @@ def get_candidate(candidate_id: str) -> CandidateDetail:
         industryBreakdown=_industry_breakdown(candidate_id),
         synthesis=_synthesis(candidate_id),
         votes=_votes(candidate_id),
+        sponsoredBills=_sponsored_bills(candidate_id),
         revolvingDoor=_revolving_door(candidate_id),
         sources=_sources(candidate_id),
     )

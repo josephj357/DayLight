@@ -79,6 +79,15 @@ export interface VoteRecord {
   sourceUrl?: string;
 }
 
+export interface SponsoredBill {
+  billId: string;
+  title: string;
+  introducedDate?: string;
+  status?: string;
+  sourceUrl?: string;
+  policyArea?: string;
+}
+
 export interface RevolvingDoor {
   organization: string;
   role: string;
@@ -100,6 +109,7 @@ export interface CandidateDetail extends CandidateSummary {
   industryBreakdown: IndustryBreakdown[];
   synthesis?: Synthesis;
   votes: VoteRecord[];
+  sponsoredBills: SponsoredBill[];
   revolvingDoor: RevolvingDoor[];
   sources: SourceLink[];
   cycle?: string;

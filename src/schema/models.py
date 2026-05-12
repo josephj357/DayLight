@@ -90,6 +90,15 @@ class VoteRecord(_CamelModel):
     source_url: str | None = Field(default=None, alias="sourceUrl")
 
 
+class SponsoredBill(_CamelModel):
+    bill_id: str = Field(alias="billId")
+    title: str
+    introduced_date: str | None = Field(default=None, alias="introducedDate")
+    status: str | None = None
+    source_url: str | None = Field(default=None, alias="sourceUrl")
+    policy_area: str | None = Field(default=None, alias="policyArea")
+
+
 class RevolvingDoor(_CamelModel):
     organization: str
     role: str
@@ -111,6 +120,7 @@ class CandidateDetail(CandidateSummary):
     industry_breakdown: list[IndustryBreakdown] = Field(default_factory=list, alias="industryBreakdown")
     synthesis: Synthesis | None = None
     votes: list[VoteRecord] = Field(default_factory=list)
+    sponsored_bills: list[SponsoredBill] = Field(default_factory=list, alias="sponsoredBills")
     revolving_door: list[RevolvingDoor] = Field(default_factory=list, alias="revolvingDoor")
     sources: list[SourceLink] = Field(default_factory=list)
     cycle: str | None = None

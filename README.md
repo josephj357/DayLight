@@ -10,9 +10,9 @@ DayLight shows voters who funds the politicians on their ballot — from the U.S
 
 It's built for the curious voter, the local journalist, the high-school civics class, and the neighbor who just wants to know who's actually paying for the yard signs.
 
-![screenshot](docs/screenshot.png)
+![District view — FL-23 ballot](docs/screenshot.png)
 
-![demo](docs/demo.gif)
+![Candidate view — Jared Moskowitz](docs/candidate-screenshot.png)
 
 ## Why I'm releasing this as a gift
 
