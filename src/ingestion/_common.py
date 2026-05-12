@@ -19,10 +19,24 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import re
+
 import requests
 import yaml
 
 logger = logging.getLogger("daylight.ingestion")
+
+# Match common API-key query params so we never log a key by accident.
+_KEY_REDACT_RE = re.compile(r"([?&])(api_key|apikey|key|token)=[^&]*", re.IGNORECASE)
+
+
+def _redact_url(url: str) -> str:
+    """Strip API-key-shaped query params from URLs before logging."""
+    return _KEY_REDACT_RE.sub(r"\1\2=REDACTED", url)
+
+
+def _redact(s: str) -> str:
+    return _KEY_REDACT_RE.sub(r"\1\2=REDACTED", s)
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DB_PATH = REPO_ROOT / "data" / "daylight.db"
@@ -51,7 +65,10 @@ class DistrictConfig:
 
     @property
     def state_offices(self) -> list[dict[str, Any]]:
-        return list(self.raw.get("state", []) or [])
+        # `state_offices` is the canonical key; older configs may use `state`
+        # but that collides with the top-level state abbreviation, so prefer
+        # state_offices and fall back only as a deprecation hatch.
+        return list(self.raw.get("state_offices", []) or [])
 
     @property
     def county_offices(self) -> list[dict[str, Any]]:
@@ -144,10 +161,17 @@ def cached_get(
         cache_file.write_text(json.dumps(data))
         return data
     except requests.RequestException as e:
-        logger.warning("HTTP GET failed: %s (%s)", url, e)
+        # Never log the URL with query params or the exception's str() (both
+        # would echo any embedded api_key). Redact both before logging.
+        safe_url = _redact_url(url)
+        safe_err = _redact(str(e))
+        logger.warning("HTTP GET failed: %s (status=%s err=%s)",
+                       safe_url,
+                       getattr(getattr(e, "response", None), "status_code", "?"),
+                       safe_err)
         return None
     except ValueError as e:
-        logger.warning("Non-JSON response from %s: %s", url, e)
+        logger.warning("Non-JSON response from %s: %s", _redact_url(url), e)
         return None
 
 

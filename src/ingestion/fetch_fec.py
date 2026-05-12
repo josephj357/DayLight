@@ -41,15 +41,45 @@ def _fetch_candidate_totals(candidate_id: str, cycle: str) -> dict[str, Any] | N
     )
 
 
-def _fetch_top_contributors_by_employer(candidate_id: str, cycle: str) -> dict[str, Any] | None:
+def _fetch_principal_committee(candidate_id: str, cycle: str) -> str | None:
+    """Find the principal campaign committee ID for a candidate.
+
+    FEC's schedule_a/by_employer endpoint only exists at the committee level,
+    so we need to look up the committee before we can query by employer.
+    """
     key = _api_key()
     if not key:
         return None
-    # FEC exposes a "schedule_a_by_employer" endpoint on the principal committee.
-    # For v1 we use the candidate aggregate where available.
+    data = cached_get(
+        f"{FEC_BASE}/candidate/{candidate_id}/committees/",
+        params={"api_key": key, "cycle": cycle, "designation": "P"},
+    )
+    if not data or not data.get("results"):
+        return None
+    # Designation "P" = principal campaign committee; take the first.
+    for committee in data["results"]:
+        if committee.get("designation") == "P":
+            return committee.get("committee_id")
+    return data["results"][0].get("committee_id")
+
+
+def _fetch_top_contributors_by_employer(committee_id: str, cycle: str) -> dict[str, Any] | None:
+    key = _api_key()
+    if not key:
+        return None
+    # FEC's by_employer aggregation lives under /schedules/, filtered by committee_id.
+    # The candidate/{id}/schedule_a/by_employer and committee/{id}/schedule_a/by_employer
+    # paths exist in the docs but return 404 in practice — only /schedules/schedule_a/by_employer
+    # actually serves data.
     return cached_get(
-        f"{FEC_BASE}/candidate/{candidate_id}/schedule_a/by_employer/",
-        params={"api_key": key, "cycle": cycle, "per_page": 20},
+        f"{FEC_BASE}/schedules/schedule_a/by_employer/",
+        params={
+            "api_key": key,
+            "committee_id": committee_id,
+            "cycle": cycle,
+            "per_page": 20,
+            "sort": "-total",
+        },
     )
 
 
@@ -121,22 +151,26 @@ def run(conn: sqlite3.Connection, district: DistrictConfig) -> int:
             )
             rows_written += 1
 
-        contributors = _fetch_top_contributors_by_employer(fec_id, cycle)
-        if contributors and contributors.get("results"):
-            for entry in contributors["results"]:
-                employer = entry.get("employer")
-                total = entry.get("total")
-                if not employer or total is None:
-                    continue
-                conn.execute(
-                    """
-                    INSERT INTO contributions
-                        (candidate_id, amount, cycle, source, raw_employer)
-                    VALUES (?, ?, ?, 'fec', ?)
-                    """,
-                    (cand_id, total, cycle, employer),
-                )
-                rows_written += 1
+        committee_id = _fetch_principal_committee(fec_id, cycle)
+        if not committee_id:
+            logger.info("No principal committee for %s in cycle %s; skipping employer rollup.", fec_id, cycle)
+        else:
+            contributors = _fetch_top_contributors_by_employer(committee_id, cycle)
+            if contributors and contributors.get("results"):
+                for entry in contributors["results"]:
+                    employer = entry.get("employer")
+                    total = entry.get("total")
+                    if not employer or total is None:
+                        continue
+                    conn.execute(
+                        """
+                        INSERT INTO contributions
+                            (candidate_id, amount, cycle, source, raw_employer)
+                        VALUES (?, ?, ?, 'fec', ?)
+                        """,
+                        (cand_id, total, cycle, employer),
+                    )
+                    rows_written += 1
 
     conn.commit()
     log_ingestion(conn, "fec", "ok", rows_written=rows_written, note=f"district={district.id}")

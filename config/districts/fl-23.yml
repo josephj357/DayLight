@@ -51,9 +51,9 @@ federal:
     incumbent:
       name: "Jared Moskowitz"
       party: D
-      bioguide_id: "M001257"           # [TODO: verify]
-      fec_candidate_id: "H2FL23149"    # [TODO: verify against FEC candidate search]
-      opensecrets_id: "N00046638"      # [TODO: verify]
+      bioguide_id: "M001217"           # verified via Congress.gov 2026-05-12
+      fec_candidate_id: "H2FL22171"    # verified via FEC OpenFEC 2026-05-12
+      opensecrets_id: "N00046638"      # [TODO: verify against OpenSecrets bulk data]
     sources:
       - label: "FEC candidate page"
         url: "https://www.fec.gov/data/candidates/?search=&state=FL&district=23"
@@ -63,8 +63,10 @@ federal:
 # ---------------------------------------------------------------------------
 # State layer — FL state Senate and State House districts that overlap FL-23.
 # 2022 redistricting boundaries; see /docs/research/state-data.md for caveats.
+# Renamed from `state:` to `state_offices:` to disambiguate from the
+# top-level `state: FL` field (YAML has no real namespacing).
 # ---------------------------------------------------------------------------
-state:
+state_offices:
   - office: "Florida State Senate"
     level: state
     district_label: "SD-30"            # [TODO: verify overlap with FL-23]

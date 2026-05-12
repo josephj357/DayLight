@@ -119,14 +119,14 @@ function SiteFooter() {
           <p className="font-semibold text-ink-900">Sources</p>
           <ul className="mt-1 space-y-1">
             <li>FEC — federal campaign finance</li>
-            <li>ProPublica Congress API — votes</li>
+            <li>Congress.gov API — votes</li>
             <li>OpenSecrets — industry rollups</li>
             <li>FL Division of Elections — state/local</li>
           </ul>
         </div>
       </div>
       <div className="border-t border-ink-200 py-4 text-center text-xs text-ink-500">
-        Built as a gift by the Orka Labs community. Licensed under AGPL-3.0.
+        Released as a gift under AGPL-3.0. Maintained by the community.
       </div>
     </footer>
   );
