@@ -10,7 +10,7 @@ Florida campaign-finance disclosure for state-level offices (state House, state 
 
 | Piece | URL | What it covers |
 |-------|-----|----------------|
-| Campaign Finance Database (candidates and committees) | https://dos.elections.myflorida.com/campaign-finance/ | Contributions, expenditures, "other distributions" reported back to **1996** |
+| Campaign Finance Database (candidates and committees) | https://dos.elections.myflorida.com/campaign-finance/ | Contributions, expenditures, "other distributions" reported back to **1996**. ⚠ **Cloudflare-challenged 2026-05-12**: direct HTTP requests receive a JS challenge page, not the search form. Programmatic access requires either (a) headed Playwright + cookie-jar persistence or (b) a third-party redistributor. |
 | Committee Database | https://dos.elections.myflorida.com/committees/ | PCs (political committees), CCEs (committees of continuous existence), ECOs (electioneering communications organizations) |
 | Filing Campaign Reports | https://dos.fl.gov/elections/candidates-committees/campaign-finance/filing-campaign-reports/ | Reporting calendar and per-cycle filing schedules |
 
@@ -34,7 +34,9 @@ Source: https://dos.fl.gov/elections/candidates-committees/campaign-finance/camp
 - **FollowTheMoney.org** (https://www.followthemoney.org/our-data/apis) — National Institute on Money in Politics. Provides a free API after myFollowTheMoney signup. Current through 2024. License `[TODO: verify]`.
 - **Transparency USA** (https://www.transparencyusa.org/fl) — also normalized; useful UI for state-level filings.
 
-For DayLight v1, the **pragmatic recommendation** is FL DoS as the primary (public-domain, authoritative) source, with FollowTheMoney as a usability-friendly normalization layer for cross-checks.
+**2026-05-12 verification note**: We confirmed the FL DoS portal is Cloudflare-protected. Implementation should NOT assume direct HTTP works. See `/src/ingestion/fetch_florida_state.py` for the three viable paths (FollowTheMoney → Accountability Project bulk → headed Playwright as a last resort).
+
+For DayLight v1, the **pragmatic recommendation** updated post-verification: **FollowTheMoney.org's free API is the most tractable starting point** — it's normalized FL DoS data without the Cloudflare hurdle. Cross-checks against FL DoS would require headed-browser machinery and aren't worth it for v1 scope.
 
 ---
 

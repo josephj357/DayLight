@@ -27,6 +27,7 @@ from . import (
     fetch_fec,
     fetch_congress,
     load_opensecrets_bulk,
+    classify_employer,
     fetch_florida_state,
     fetch_broward_local,
     synthesize,
@@ -41,6 +42,9 @@ INGESTION_STEPS: list[tuple[str, Callable[[sqlite3.Connection, DistrictConfig], 
     ("fec", fetch_fec.run),
     ("congress_gov", fetch_congress.run),
     ("opensecrets_bulk", load_opensecrets_bulk.run),
+    # Fallback industry classifier runs AFTER OpenSecrets bulk so it never
+    # overwrites real OpenSecrets data (different source=, different row).
+    ("industry_classifier", classify_employer.run),
     ("florida_state", fetch_florida_state.run),
     ("broward_local", fetch_broward_local.run),
     ("synthesis", synthesize.run),

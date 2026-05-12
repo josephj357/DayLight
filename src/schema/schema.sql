@@ -90,7 +90,8 @@ CREATE TABLE IF NOT EXISTS industry_totals (
     industry        TEXT NOT NULL,
     amount          REAL NOT NULL,
     cycle           TEXT,
-    PRIMARY KEY (candidate_id, industry, cycle)
+    source          TEXT NOT NULL DEFAULT 'opensecrets',  -- 'opensecrets' | 'daylight_fallback'
+    PRIMARY KEY (candidate_id, industry, cycle, source)
 );
 
 CREATE TABLE IF NOT EXISTS bills (

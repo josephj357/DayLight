@@ -39,24 +39,40 @@ def run(conn: sqlite3.Connection, district: DistrictConfig) -> int:
         log_ingestion(conn, "fl_doe", "partial", note="non-FL district")
         return 0
 
-    # TODO: implement Florida DoS scrape.
-    # Phases:
-    #   1. Build the DoS search-form URL for each state-office race in district.state_offices.
-    #   2. Submit the form, parse the CSV export (or HTML table).
-    #   3. Normalize donors -> donors table, contributions -> contributions table
-    #      with source = 'fl_doe'.
+    # State-level ingestion remains a stub in v1 because the natural source
+    # (FL DoS at https://dos.elections.myflorida.com/campaign-finance/) sits
+    # behind a Cloudflare managed-challenge page — verified 2026-05-12. Direct
+    # HTTP from this codebase returns the JS challenge HTML, not the form.
     #
-    # The DoS search URL pattern is documented in /docs/research/state-data.md.
-    # That doc also flags the 2026 redistricting litigation — be careful with
-    # district boundaries until the courts settle.
+    # Three viable paths for whoever picks this up:
+    #
+    # 1. **FollowTheMoney.org API** (most tractable). Free signup at
+    #    https://www.followthemoney.org/our-data/apis. Normalized from FL DoS
+    #    data, current through 2024. Wire a new fetcher here that hits their
+    #    REST endpoint and maps responses into the `contributions` table with
+    #    source='fl_doe'. Verify license terms first (research doc has a
+    #    [TODO: verify] on redistribution rights).
+    #
+    # 2. **The Accountability Project bulk** at
+    #    https://publicaccountability.org/datasets/40/fl_contribs/. 27M FL
+    #    contribution records 1995-2023, normalized. Bulk download is large
+    #    (multi-GB) so this is an offline-load pattern, not an API. License
+    #    also needs verification.
+    #
+    # 3. **Headed Playwright against FL DoS directly**. Solves the Cloudflare
+    #    challenge but introduces a heavy dependency and may still get
+    #    flagged for automated traffic. Last-resort path.
+    #
+    # All three live in /docs/research/state-data.md — update that doc with
+    # what you find when you build one.
 
     log_ingestion(
         conn,
         "fl_doe",
         "partial",
         note=(
-            "Florida state scraper not implemented in v1. "
-            "See /docs/research/state-data.md for the DoS portal URL pattern."
+            "FL DoS portal is Cloudflare-challenged; direct scrape blocked. "
+            "See fetch_florida_state.py docstring for the three viable paths."
         ),
     )
     return 0

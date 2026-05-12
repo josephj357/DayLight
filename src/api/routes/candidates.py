@@ -61,22 +61,33 @@ def _top_donors(candidate_id: str) -> list[Donor]:
 
 
 def _industry_breakdown(candidate_id: str) -> list[IndustryBreakdown]:
+    # Prefer OpenSecrets rows; fall back to the daylight_fallback classifier
+    # only if no OpenSecrets data is present for this candidate. We never mix
+    # the two sources in one response — that would silently double-count.
+    has_opensecrets = fetchone(
+        "SELECT 1 FROM industry_totals WHERE candidate_id = ? AND source = 'opensecrets' LIMIT 1",
+        (candidate_id,),
+    )
+    source = "opensecrets" if has_opensecrets else "daylight_fallback"
     rows = fetchall(
         """
         SELECT industry, amount FROM industry_totals
-        WHERE candidate_id = ?
+        WHERE candidate_id = ? AND source = ?
         ORDER BY amount DESC
         """,
-        (candidate_id,),
+        (candidate_id, source),
     )
-    total = sum(float(r["amount"] or 0.0) for r in rows) or 1.0
+    # Exclude non-industry buckets from concentration math per methodology §2.
+    non_industry = {"Retired/Unemployed", "Retired", "Self-Employed"}
+    filtered = [r for r in rows if r["industry"] not in non_industry]
+    total = sum(float(r["amount"] or 0.0) for r in filtered) or 1.0
     return [
         IndustryBreakdown(
             industry=r["industry"],
             amount=float(r["amount"] or 0.0),
             share=float(r["amount"] or 0.0) / total,
         )
-        for r in rows
+        for r in filtered
     ]
 
 
