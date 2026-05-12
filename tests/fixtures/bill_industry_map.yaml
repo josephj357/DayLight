@@ -1,0 +1,102 @@
+# Test fixture: bill→industry correlation map.
+# Mirrors the shape of /config/bill_industry_map.yaml without touching the real config.
+# direction: +1 means "industry's stated public position favors a YES vote on this bill"
+# direction: -1 means "industry's stated public position favors a NO vote on this bill"
+# Every entry must cite a primary source (industry trade group statement, PAC scorecard, etc.)
+# in production. Fixture citations below are synthetic.
+
+bills:
+  # Securities & Investment — 3 scored votes
+  hr1234-118:
+    industry: "Securities & Investment"
+    direction: 1
+    rationale: "SIFMA endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/sifma/hr1234"
+  hr2345-118:
+    industry: "Securities & Investment"
+    direction: 1
+    rationale: "ICI scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/ici/hr2345"
+  hr3456-118:
+    industry: "Securities & Investment"
+    direction: 1
+    rationale: "ABA banking division endorsed YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aba/hr3456"
+
+  # Real Estate — 4 scored votes
+  hr4567-118:
+    industry: "Real Estate"
+    direction: 1
+    rationale: "NAR endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/nar/hr4567"
+  hr5678-118:
+    industry: "Real Estate"
+    direction: 1
+    rationale: "NMHC endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/nmhc/hr5678"
+  hr6789-118:
+    industry: "Real Estate"
+    direction: 1
+    rationale: "NAHB endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/nahb/hr6789"
+  hr7890-118:
+    industry: "Real Estate"
+    direction: 1
+    rationale: "BOMA endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/boma/hr7890"
+
+  # Lawyers/Law Firms — only 2 scored votes (should be EXCLUDED per §3.2)
+  hr8901-118:
+    industry: "Lawyers/Law Firms"
+    direction: 1
+    rationale: "ABA position — synthetic fixture citation"
+    source_url: "https://example.invalid/aba/hr8901"
+  hr9012-118:
+    industry: "Lawyers/Law Firms"
+    direction: -1
+    rationale: "ATLA opposed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/atla/hr9012"
+
+  # Health Professionals — 3 scored votes
+  hr1011-118:
+    industry: "Health Professionals"
+    direction: 1
+    rationale: "AMA scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/ama/hr1011"
+  hr1112-118:
+    industry: "Health Professionals"
+    direction: 1
+    rationale: "AAFP endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/aafp/hr1112"
+  hr1213-118:
+    industry: "Health Professionals"
+    direction: 1
+    rationale: "ACP endorsed bill — synthetic fixture citation"
+    source_url: "https://example.invalid/acp/hr1213"
+
+  # Pro-Israel — 5 scored votes
+  hr1314-118:
+    industry: "Pro-Israel"
+    direction: 1
+    rationale: "AIPAC scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aipac/hr1314"
+  hr1415-118:
+    industry: "Pro-Israel"
+    direction: 1
+    rationale: "AIPAC scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aipac/hr1415"
+  hr1516-118:
+    industry: "Pro-Israel"
+    direction: 1
+    rationale: "AIPAC scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aipac/hr1516"
+  hr1617-118:
+    industry: "Pro-Israel"
+    direction: 1
+    rationale: "AIPAC scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aipac/hr1617"
+  hr1718-118:
+    industry: "Pro-Israel"
+    direction: 1
+    rationale: "AIPAC scorecard favored YES — synthetic fixture citation"
+    source_url: "https://example.invalid/aipac/hr1718"

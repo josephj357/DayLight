@@ -1,0 +1,21 @@
+# Test fixture: district configuration for FL-23.
+# Mirrors the shape of a real /config/<district>.yaml without touching real config.
+
+district_id: "FL-23"
+state: "FL"
+congressional_district: 23
+county_primary: "Broward"
+top_n_industries: 5
+min_scored_votes_per_industry: 3
+revolving_door_dollar_threshold: 10000
+
+federal_candidates:
+  - candidate_id: "H2FL23001"
+    opensecrets_id: "N00043513"
+    propublica_id: "M001225"
+    name: "Jared Moskowitz (TEST FIXTURE)"
+    party_label_neutral: "incumbent"
+    office: "U.S. House"
+
+state_candidates: []
+local_candidates: []

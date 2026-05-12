@@ -1,0 +1,27 @@
+# Synthetic test district used by test_district_config.py to prove that adding a new
+# district via YAML works without code changes. No real candidates referenced.
+
+district_id: "TEST-99"
+state: "ZZ"
+congressional_district: 99
+county_primary: "Synthetic"
+top_n_industries: 3
+min_scored_votes_per_industry: 2
+revolving_door_dollar_threshold: 5000
+
+federal_candidates:
+  - candidate_id: "H_TEST_99_001"
+    opensecrets_id: "NTEST00001"
+    propublica_id: "TEST001"
+    name: "Test Candidate One"
+    party_label_neutral: "incumbent"
+    office: "U.S. House"
+  - candidate_id: "H_TEST_99_002"
+    opensecrets_id: "NTEST00002"
+    propublica_id: "TEST002"
+    name: "Test Candidate Two"
+    party_label_neutral: "challenger"
+    office: "U.S. House"
+
+state_candidates: []
+local_candidates: []

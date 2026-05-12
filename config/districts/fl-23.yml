@@ -1,0 +1,236 @@
+# DayLight district configuration — FL-23 (reference / v1 default).
+#
+# This file is the entire description of a district. Drop a copy at
+# /config/districts/<your-district>.yml, edit the values, and the rest of
+# DayLight picks it up. No code changes required.
+#
+# All [TODO: verify] markers are deliberate. Confirm against the linked
+# primary sources before treating these as authoritative. Florida's 2026
+# congressional map is in active litigation (see /docs/research/state-data.md),
+# so boundary-dependent fields may need updates if a court issues a stay.
+
+id: fl-23
+display_name: "Florida's 23rd Congressional District"
+description: >
+  Central and northern Broward County, Florida. Includes parts of Pompano Beach,
+  Coral Springs, Parkland, Coconut Creek, Tamarac, Sunrise, Plantation, and Davie.
+
+state: FL
+fips_state: "12"
+plan_id: "fl-cong-2022-sb102"        # 2022 SB 102 plan; pin to whatever is in effect on snapshot_date
+snapshot_date: "2026-05-12"
+cycle: "2024"                          # active election cycle for v1 ingestion
+
+# ZIP codes the landing page should route to this district. Approximate — voters
+# near district boundaries should still confirm via house.gov.
+zip_codes:
+  - "33060"
+  - "33062"
+  - "33063"
+  - "33064"
+  - "33065"
+  - "33066"
+  - "33067"
+  - "33068"
+  - "33069"
+  - "33071"
+  - "33073"
+  - "33076"
+
+# ---------------------------------------------------------------------------
+# Federal layer — U.S. House race.
+# ---------------------------------------------------------------------------
+federal:
+  - office: "U.S. House"
+    level: federal
+    district_label: "FL-23"
+    cycle: "2024"
+    fec_candidate_search:
+      state: FL
+      district: "23"
+    incumbent:
+      name: "Jared Moskowitz"
+      party: D
+      bioguide_id: "M001257"           # [TODO: verify]
+      fec_candidate_id: "H2FL23149"    # [TODO: verify against FEC candidate search]
+      opensecrets_id: "N00046638"      # [TODO: verify]
+    sources:
+      - label: "FEC candidate page"
+        url: "https://www.fec.gov/data/candidates/?search=&state=FL&district=23"
+      - label: "Congress.gov member page"
+        url: "https://www.congress.gov/member/jared-moskowitz/M001257"
+
+# ---------------------------------------------------------------------------
+# State layer — FL state Senate and State House districts that overlap FL-23.
+# 2022 redistricting boundaries; see /docs/research/state-data.md for caveats.
+# ---------------------------------------------------------------------------
+state:
+  - office: "Florida State Senate"
+    level: state
+    district_label: "SD-30"            # [TODO: verify overlap with FL-23]
+    cycle: "2024"
+  - office: "Florida State Senate"
+    level: state
+    district_label: "SD-32"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State Senate"
+    level: state
+    district_label: "SD-35"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State Senate"
+    level: state
+    district_label: "SD-37"            # [TODO: verify overlap]
+    cycle: "2024"
+
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-93"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-94"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-95"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-96"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-97"            # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-100"           # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-101"           # [TODO: verify overlap]
+    cycle: "2024"
+  - office: "Florida State House"
+    level: state
+    district_label: "HD-103"           # [TODO: verify overlap]
+    cycle: "2024"
+
+# ---------------------------------------------------------------------------
+# County layer — Broward County Commission and Broward County School Board.
+# ---------------------------------------------------------------------------
+county:
+  - office: "Broward County Commission"
+    level: county
+    district_label: "District 1"
+    cycle: "2024"
+  - office: "Broward County Commission"
+    level: county
+    district_label: "District 2"
+    cycle: "2024"
+  - office: "Broward County Commission"
+    level: county
+    district_label: "District 3"
+    cycle: "2024"
+  - office: "Broward County Commission"
+    level: county
+    district_label: "District 4"
+    cycle: "2024"
+  - office: "Broward County Commission"
+    level: county
+    district_label: "District 5"
+    cycle: "2024"
+
+  - office: "Broward County School Board"
+    level: county
+    district_label: "District 1"
+    cycle: "2024"
+  - office: "Broward County School Board"
+    level: county
+    district_label: "District 2"
+    cycle: "2024"
+  - office: "Broward County School Board"
+    level: county
+    district_label: "District 3"
+    cycle: "2024"
+  - office: "Broward County School Board"
+    level: county
+    district_label: "District 5"
+    cycle: "2024"
+  - office: "Broward County School Board"
+    level: county
+    district_label: "At-Large"         # [TODO: verify at-large vs single-member split]
+    cycle: "2024"
+
+# ---------------------------------------------------------------------------
+# Judicial layer — 17th Judicial Circuit (Broward) + Broward County Court.
+# Florida judicial elections are nonpartisan; party column will be null.
+# ---------------------------------------------------------------------------
+judicial:
+  - office: "17th Judicial Circuit Court Judge"
+    level: judicial
+    district_label: "Group 24"         # [TODO: verify which groups are on the 2024 ballot]
+    cycle: "2024"
+  - office: "Broward County Court Judge"
+    level: judicial
+    district_label: "Group 5"          # [TODO: verify which groups are on the 2024 ballot]
+    cycle: "2024"
+
+# ---------------------------------------------------------------------------
+# Special districts — Soil & Water Conservation, etc.
+# ---------------------------------------------------------------------------
+special:
+  - office: "Broward Soil & Water Conservation District"
+    level: special
+    district_label: "Seat 1"           # [TODO: verify total seat count]
+    cycle: "2024"
+
+# ---------------------------------------------------------------------------
+# Data sources — where each layer's data is pulled from. The ingestion scripts
+# read this and route accordingly.
+# ---------------------------------------------------------------------------
+data_sources:
+  federal:
+    fec:
+      base_url: "https://api.open.fec.gov/v1"
+      auth: api_key
+    congress_gov:
+      base_url: "https://api.congress.gov/v3"
+      auth: api_key
+      note: "Replaces the discontinued ProPublica Congress API (shut down 2024-07-10)."
+    opensecrets:
+      base_url: "https://www.opensecrets.org/open-data/bulk-data"
+      auth: none
+      mode: bulk
+      license: "CC BY-NC-SA 3.0 US"
+      attribution_required: true
+      note: "OpenSecrets API discontinued 2025-04-15. Use periodic bulk-data refresh."
+
+  state:
+    fl_division_of_elections:
+      base_url: "https://dos.fl.gov/elections/candidates-committees/campaign-finance/"
+      auth: none
+      mode: scrape
+      note: "Public records; reformat HTML/CSV exports."
+
+  county:
+    broward_soe:
+      base_url: "https://www.browardsoe.gov/"
+      auth: none
+      mode: scrape
+      note: "VoterFocus is a vendor UI — scrape the records, not the UI artifacts."
+
+  lobbying:
+    senate_lda:
+      base_url: "https://lda.senate.gov/api/v1"
+      auth: token
+      note: "Federal lobbyist disclosure (Senate Office of Public Records)."
+
+# ---------------------------------------------------------------------------
+# Methodology knobs (mirrors /docs/methodology.md defaults).
+# Adjust per-district if your local political-finance landscape needs it,
+# but document the deviation.
+# ---------------------------------------------------------------------------
+methodology:
+  top_n_industries: 5
+  min_scored_votes_per_industry: 3
+  revolving_door_dollar_threshold: 10000

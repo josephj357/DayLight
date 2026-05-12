@@ -1,0 +1,16 @@
+{
+  "_fixture_metadata": {
+    "description": "Frozen examples of synthesis outputs from the AI layer. Used by test_synthesis_neutrality.py. The 'compliant' set must pass; the 'noncompliant' set must FAIL so we can prove the test actually catches violations."
+  },
+  "compliant": [
+    "Top career donor industries are Lawyers/Law Firms ($1.24M), Securities & Investment ($985K), and Pro-Israel ($720K). The member voted with the publicly stated position of those industries on 12 of 15 scored roll calls. Notable contradictions include a NO vote on HR-3456 (Securities & Investment industry favored YES) and a NO vote on HR-1213 (Health Professionals industry favored YES).",
+    "Donor concentration is moderate: the top five industries account for $3.97M of $6.20M in itemized career contributions. The member's alignment with those industries' stated positions across 15 scored votes is 80%.",
+    "Insufficient data for synthesis."
+  ],
+  "noncompliant": [
+    "This radical politician was bought by Wall Street and has betrayed working families.",
+    "A MAGA extremist whose corporate donors expect him to fight the woke agenda.",
+    "Captured by his donors, this socialist has sold out to the deep state.",
+    "A fascist puppet of foreign interests who voted with his communist allies."
+  ]
+}

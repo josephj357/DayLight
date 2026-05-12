@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Typography (system + open fonts, no CDN) ---- */
+/* If you want Inter/Lora locally, drop them in /public/fonts and add @font-face here.
+   The defaults fall back to system fonts so the app stays CDN-free out of the box. */
+
+:root {
+  --bg: #fffdf6;
+  --fg: #1c1917;
+  --muted: #57534e;
+  --accent: #f59e0b;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Focus rings — accessibility */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* The editorial serif used by SynthesisCard */
+.synthesis-prose {
+  font-family: Lora, Georgia, "Times New Roman", serif;
+  font-feature-settings: "liga" 1, "kern" 1;
+  line-height: 1.55;
+}
+
+/* Hairline divider often used between dense sections */
+.hairline {
+  border-color: rgb(231 229 228);
+}

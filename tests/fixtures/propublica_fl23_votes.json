@@ -1,0 +1,32 @@
+{
+  "_fixture_metadata": {
+    "description": "Synthesized ProPublica Congress API roll-call response shape for FL-23 incumbent. Realistic-but-fake. Vote outcomes chosen to make alignment-score math tractable in tests.",
+    "member_id": "M001225",
+    "candidate_name": "Jared Moskowitz (TEST FIXTURE)",
+    "snapshot_date": "2026-04-30",
+    "source_url_simulated": "https://api.propublica.org/congress/v1/members/M001225/votes.json"
+  },
+  "votes": [
+    {"bill_id": "hr1234-118", "roll_call": 101, "question": "On Passage", "result": "Passed", "date": "2024-03-12", "position": "Yes", "industry_tags": ["Securities & Investment"]},
+    {"bill_id": "hr2345-118", "roll_call": 122, "question": "On Passage", "result": "Failed", "date": "2024-04-02", "position": "Yes", "industry_tags": ["Securities & Investment"]},
+    {"bill_id": "hr3456-118", "roll_call": 154, "question": "On Passage", "result": "Passed", "date": "2024-05-15", "position": "No",  "industry_tags": ["Securities & Investment"]},
+
+    {"bill_id": "hr4567-118", "roll_call": 187, "question": "On Passage", "result": "Passed", "date": "2024-06-20", "position": "Yes", "industry_tags": ["Real Estate"]},
+    {"bill_id": "hr5678-118", "roll_call": 201, "question": "On Passage", "result": "Failed", "date": "2024-07-09", "position": "Yes", "industry_tags": ["Real Estate"]},
+    {"bill_id": "hr6789-118", "roll_call": 232, "question": "On Passage", "result": "Passed", "date": "2024-08-14", "position": "Yes", "industry_tags": ["Real Estate"]},
+    {"bill_id": "hr7890-118", "roll_call": 245, "question": "On Passage", "result": "Passed", "date": "2024-09-03", "position": "Yes", "industry_tags": ["Real Estate"]},
+
+    {"bill_id": "hr8901-118", "roll_call": 278, "question": "On Passage", "result": "Passed", "date": "2024-09-21", "position": "Yes", "industry_tags": ["Lawyers/Law Firms"]},
+    {"bill_id": "hr9012-118", "roll_call": 289, "question": "On Passage", "result": "Failed", "date": "2024-10-04", "position": "No",  "industry_tags": ["Lawyers/Law Firms"]},
+
+    {"bill_id": "hr1011-118", "roll_call": 311, "question": "On Passage", "result": "Passed", "date": "2024-10-30", "position": "Yes", "industry_tags": ["Health Professionals"]},
+    {"bill_id": "hr1112-118", "roll_call": 322, "question": "On Passage", "result": "Failed", "date": "2024-11-15", "position": "Yes", "industry_tags": ["Health Professionals"]},
+    {"bill_id": "hr1213-118", "roll_call": 333, "question": "On Passage", "result": "Passed", "date": "2024-12-01", "position": "No",  "industry_tags": ["Health Professionals"]},
+
+    {"bill_id": "hr1314-118", "roll_call": 345, "question": "On Passage", "result": "Passed", "date": "2024-12-12", "position": "Yes", "industry_tags": ["Pro-Israel"]},
+    {"bill_id": "hr1415-118", "roll_call": 356, "question": "On Passage", "result": "Passed", "date": "2025-01-08", "position": "Yes", "industry_tags": ["Pro-Israel"]},
+    {"bill_id": "hr1516-118", "roll_call": 367, "question": "On Passage", "result": "Failed", "date": "2025-01-22", "position": "Yes", "industry_tags": ["Pro-Israel"]},
+    {"bill_id": "hr1617-118", "roll_call": 378, "question": "On Passage", "result": "Passed", "date": "2025-02-05", "position": "Yes", "industry_tags": ["Pro-Israel"]},
+    {"bill_id": "hr1718-118", "roll_call": 389, "question": "On Passage", "result": "Passed", "date": "2025-02-19", "position": "Yes", "industry_tags": ["Pro-Israel"]}
+  ]
+}

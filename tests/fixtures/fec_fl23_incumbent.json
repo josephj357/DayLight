@@ -1,0 +1,53 @@
+{
+  "_fixture_metadata": {
+    "description": "Synthesized FEC API response shape for FL-23 incumbent. Realistic-but-fake. Numbers chosen to make alignment-score math tractable in tests.",
+    "candidate_id": "H2FL23001",
+    "candidate_name": "Jared Moskowitz (TEST FIXTURE)",
+    "office": "H",
+    "office_state": "FL",
+    "office_district": "23",
+    "cycle": 2024,
+    "snapshot_date": "2026-04-30",
+    "source_url_simulated": "https://api.open.fec.gov/v1/candidate/H2FL23001/totals/"
+  },
+  "results": [
+    {
+      "candidate_id": "H2FL23001",
+      "cycle": 2024,
+      "receipts": 4250000.00,
+      "disbursements": 4100000.00,
+      "cash_on_hand_end_period": 950000.00,
+      "individual_itemized_contributions": 3100000.00,
+      "individual_unitemized_contributions": 425000.00,
+      "other_political_committee_contributions": 575000.00
+    }
+  ],
+  "career_totals": {
+    "career_receipts": 8500000.00,
+    "career_individual_itemized": 6200000.00
+  },
+  "top_contributors_by_employer": [
+    {"employer": "Self-Employed",                 "amount": 425000.00},
+    {"employer": "Retired",                       "amount": 312000.00},
+    {"employer": "Akerman LLP",                   "amount": 48500.00},
+    {"employer": "Greenberg Traurig",             "amount": 41200.00},
+    {"employer": "AIPAC",                         "amount": 38900.00},
+    {"employer": "Holland & Knight",              "amount": 32100.00},
+    {"employer": "Goldman Sachs",                 "amount": 29800.00},
+    {"employer": "Blackstone Group",              "amount": 27500.00},
+    {"employer": "Related Companies",             "amount": 24300.00},
+    {"employer": "Memorial Healthcare System",    "amount": 21900.00}
+  ],
+  "industry_totals_career": {
+    "Lawyers/Law Firms":              1240000.00,
+    "Securities & Investment":         985000.00,
+    "Pro-Israel":                      720000.00,
+    "Real Estate":                     615000.00,
+    "Health Professionals":            410000.00,
+    "Retired":                         312000.00,
+    "Self-Employed":                   425000.00,
+    "Education":                       198000.00,
+    "Hospitals/Nursing Homes":         152000.00,
+    "TV/Movies/Music":                 134000.00
+  }
+}
