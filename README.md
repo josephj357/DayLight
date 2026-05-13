@@ -14,6 +14,23 @@ It's built for the curious voter, the local journalist, the high-school civics c
 
 ![Candidate view — Jared Moskowitz](docs/candidate-screenshot.png)
 
+## How DayLight is different from OpenSecrets / Vote Smart / ProPublica
+
+> **OpenSecrets is the research database. DayLight is the ballot you actually vote with.**
+
+OpenSecrets (which recently absorbed FollowTheMoney/NIMP) has 20+ years of curated federal and state donor data, and DayLight uses their methodology and their data wherever we can. We are not trying to replace them. They're upstream. We're a voter-facing lens on the data they curate.
+
+The pieces DayLight does that existing tools don't:
+
+- **Ballot-builder UX.** Enter a ZIP, get every race a voter will actually see — federal, state, county, school board, judges, soil and water — on one page. Existing tools make you search per-politician; DayLight is organized around the ballot itself.
+- **Down-ballot depth.** The killer feature is the **races no one else covers clearly**: county commission, school board, judicial elections, special districts. National tools are federal-heavy by design — for a $20k race for a school-board seat where small donations have outsized influence, there's almost no consumer-friendly transparency tool.
+- **AI plain-English synthesis.** Per candidate, DayLight generates a short factual summary connecting their stated platform, top-donor industries, and votes — with a religious neutrality contract enforced by a red-flag vocabulary filter. Other tools surface data and leave interpretation to the reader.
+- **Fork-for-your-district architecture.** One YAML file in `/config/districts/` describes one district. Anyone in any community can clone DayLight, point it at their county, and stand up a working civic-transparency tool for their area. National tools are centralized; DayLight is designed to be cloned and re-pointed.
+- **Methodology as a separately-licensed spec.** Our methodology document is CC BY-SA 4.0 so other civic-tech projects can adopt and adapt it without inheriting AGPL on their codebase. Methodology is portable, code is copyleft.
+- **Loud about its blind spots.** Dark money, in-kind contributions, independent expenditures, and missing local data are surfaced as part of every view — not buried in editorial.
+
+If "I want to know who's funding the school-board candidate on my ballot before I vote next Tuesday" is the question, DayLight is the answer DayLight is trying to be. If "I want to research a U.S. senator's career donor history for an investigative piece," OpenSecrets is still the better tool.
+
 ## Why I'm releasing this as a gift
 
 Citizens deserve to know who funds the politicians they vote for. The data exists — it's scattered across FEC.gov, OpenSecrets, ProPublica, state portals, county election offices. DayLight pulls it together into one view, focused on the down-ballot races nobody else covers clearly.
