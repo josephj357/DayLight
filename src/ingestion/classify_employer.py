@@ -47,10 +47,18 @@ _KEYWORD_MAP: list[tuple[str, str]] = [
     ("KIRKLAND & ELLIS", "Lawyers/Law Firms"),
     ("SIDLEY AUSTIN", "Lawyers/Law Firms"),
     ("MORGAN LEWIS", "Lawyers/Law Firms"),
+    ("PANZA MAURER", "Lawyers/Law Firms"),     # FL law firm
+    ("WEISS HANDLER", "Lawyers/Law Firms"),    # FL family-law firm
+    ("STEARNS WEAVER", "Lawyers/Law Firms"),
+    ("CARLTON FIELDS", "Lawyers/Law Firms"),
     (" LLP", "Lawyers/Law Firms"),
+    (" P.A.", "Lawyers/Law Firms"),            # Professional Association, common FL legal entity
+    # Note: NOT using bare " PA" — it matches " PARTNERS" and mis-routes
+    # firms like "BALLARD PARTNERS" to Lawyers. The dotted " P.A." is safe.
     ("ATTORNEY", "Lawyers/Law Firms"),
     ("LAW FIRM", "Lawyers/Law Firms"),
     ("LAW OFFICE", "Lawyers/Law Firms"),
+    ("LAW GROUP", "Lawyers/Law Firms"),
 
     # --- Lobbying firms ---
     ("BALLARD PARTNERS", "Lobbyists"),
@@ -77,15 +85,64 @@ _KEYWORD_MAP: list[tuple[str, str]] = [
     ("WELLS FARGO", "Commercial Banks"),
     ("CITIBANK", "Commercial Banks"),
     ("CITIGROUP", "Commercial Banks"),
+    # --- Investment management / private equity (broader patterns) ---
+    ("SOUTHOCEAN CAPITAL", "Securities & Investment"),
+    ("MERITAGE GROUP", "Securities & Investment"),
+    ("CAPITAL PARTNERS", "Securities & Investment"),
+    ("CAPITAL MANAGEMENT", "Securities & Investment"),
+    ("INVESTMENTS LLC", "Securities & Investment"),
+    ("INVESTMENT MANAGEMENT", "Securities & Investment"),
+    ("PRIVATE EQUITY", "Securities & Investment"),
+    ("HEDGE FUND", "Securities & Investment"),
+    ("ASSET MANAGEMENT", "Securities & Investment"),
+    # --- Consumer finance / credit / lending (distinct from Securities) ---
+    ("ADVANCE FINANCIAL", "Finance/Credit"),
+    ("AMSCOT FINANCIAL", "Finance/Credit"),
+    ("AMSCOT", "Finance/Credit"),
+    ("PAYDAY", "Finance/Credit"),
+    ("CONSUMER FINANCE", "Finance/Credit"),
+    ("CREDIT UNION", "Credit Unions"),
+    # --- Insurance ---
+    ("BROWN & BROWN INSURANCE", "Insurance"),
+    ("BROWN AND BROWN", "Insurance"),
+    ("AIG ", "Insurance"),
+    ("STATE FARM", "Insurance"),
+    ("ALLSTATE", "Insurance"),
+    ("PROGRESSIVE INSURANCE", "Insurance"),
+    ("INSURANCE BROKER", "Insurance"),
+    ("INSURANCE AGENCY", "Insurance"),
+    ("INSURANCE GROUP", "Insurance"),
+    ("REINSURANCE", "Insurance"),
+    (" INSURANCE", "Insurance"),                # leading space — only "X INSURANCE", not start of word
+    # --- Automotive ---
+    ("DEALER SERVICES NETWORK", "Automotive"),
+    ("AUTO DEALER", "Automotive"),
+    ("AUTOMOTIVE", "Automotive"),
+    ("FORD MOTOR", "Automotive"),
+    ("GENERAL MOTORS", "Automotive"),
+    ("TOYOTA", "Automotive"),
+    ("HONDA MOTOR", "Automotive"),
 
-    # --- Real estate / development ---
+    # --- Real estate / development / homebuilding ---
     ("RELATED COMPANIES", "Real Estate"),
     ("BROOKFIELD", "Real Estate"),
     ("TISHMAN SPEYER", "Real Estate"),
+    ("LENNAR", "Real Estate"),                 # FL-based homebuilder
+    ("PULTE", "Real Estate"),
+    ("D.R. HORTON", "Real Estate"),
+    ("DR HORTON", "Real Estate"),
+    ("TOLL BROTHERS", "Real Estate"),
+    ("KB HOME", "Real Estate"),
+    ("MERITAGE HOMES", "Real Estate"),
     ("REALTOR", "Real Estate"),
     ("REAL ESTATE", "Real Estate"),
     ("DEVELOPMENT GROUP", "Real Estate"),
     ("PROPERTIES", "Real Estate"),
+    ("HOMEBUILDER", "Real Estate"),
+    (" HOMES", "Real Estate"),                 # leading space avoids matching "HOMEMAKER"
+    ("CONSTRUCTION", "Construction"),
+    ("CONTRACTORS", "Construction"),
+    ("BUILDERS", "Construction"),
 
     # --- Healthcare ---
     ("MEMORIAL HEALTHCARE", "Hospitals/Nursing Homes"),

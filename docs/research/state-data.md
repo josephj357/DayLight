@@ -36,7 +36,13 @@ Source: https://dos.fl.gov/elections/candidates-committees/campaign-finance/camp
 
 **2026-05-12 verification note**: We confirmed the FL DoS portal is Cloudflare-protected. Implementation should NOT assume direct HTTP works. See `/src/ingestion/fetch_florida_state.py` for the three viable paths (FollowTheMoney → Accountability Project bulk → headed Playwright as a last resort).
 
-For DayLight v1, the **pragmatic recommendation** updated post-verification: **FollowTheMoney.org's free API is the most tractable starting point** — it's normalized FL DoS data without the Cloudflare hurdle. Cross-checks against FL DoS would require headed-browser machinery and aren't worth it for v1 scope.
+For DayLight v1, the **pragmatic recommendation** updated again 2026-05-12: **OpenSecrets bulk data is now the only viable state-data path** (post-merger consolidation). The FollowTheMoney API path was attempted and abandoned — their post-merger UI has no path to issue new API keys. The remaining options, in order:
+
+1. **OpenSecrets bulk download** (manual, multi-GB, CC BY-NC-SA 3.0) — the canonical successor.
+2. **Email `info@opensecrets.org`** asking for API access — slow but they may have a new offering.
+3. **Headed Playwright against FL DoS** — fights Cloudflare; heavy lift; last resort.
+
+In the meantime, DayLight's industry-classifier fallback (`/src/ingestion/classify_employer.py`) provides best-effort industry labels for FEC-derived contributions only, tagged `source='daylight_fallback'` so it's never confused with real OpenSecrets data once that lands.
 
 ---
 

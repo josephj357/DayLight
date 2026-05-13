@@ -46,12 +46,15 @@ def run(conn: sqlite3.Connection, district: DistrictConfig) -> int:
     #
     # Three viable paths for whoever picks this up:
     #
-    # 1. **FollowTheMoney.org API** (most tractable). Free signup at
-    #    https://www.followthemoney.org/our-data/apis. Normalized from FL DoS
-    #    data, current through 2024. Wire a new fetcher here that hits their
-    #    REST endpoint and maps responses into the `contributions` table with
-    #    source='fl_doe'. Verify license terms first (research doc has a
-    #    [TODO: verify] on redistribution rights).
+    # 1. **OpenSecrets bulk data** (post-merger canonical source). NIMP/
+    #    FollowTheMoney merged into OpenSecrets in late 2025; state data
+    #    lives there now. Bulk CSVs at https://www.opensecrets.org/open-data/
+    #    are CC BY-NC-SA 3.0. Manual multi-GB download required; loader code
+    #    skeleton already exists at /src/ingestion/load_opensecrets_bulk.py.
+    #
+    #    FollowTheMoney's own API was attempted 2026-05-12 and abandoned:
+    #    their post-merger UI has no working path to issue new API keys.
+    #    See /docs/research/state-data.md for the verification trace.
     #
     # 2. **The Accountability Project bulk** at
     #    https://publicaccountability.org/datasets/40/fl_contribs/. 27M FL
